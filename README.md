@@ -1,26 +1,35 @@
 # Kakunin Samples
 
+> Comply with MiCA Art. 72 and EU AI Act in under 10 minutes.
+
 End-to-end integration examples for the [Kakunin](https://kakunin.ai) AI agent compliance API.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![kakunin.ai](https://img.shields.io/badge/docs-kakunin.ai-3aaa35?style=flat-square)](https://kakunin.ai/docs)
+
+**⭐ If this saves you compliance headaches, star this repo.**
+
+---
 
 ## What is Kakunin?
 
 Kakunin issues X.509 cryptographic identities to AI agents, monitors their behaviour in real time, and generates MiCA & EU AI Act compliance reports — all via API.
 
+```
+Your AI agent  →  Kakunin API  →  X.509 cert + audit log + compliance report
+```
+
+---
+
 ## Quickstart (TypeScript)
 
-**Prerequisites:** Node ≥ 18, an API key from [dashboard → API Keys](https://kakunin.ai/dashboard/api-keys)
+**Prerequisites:** Node ≥ 18, API key from [dashboard → API Keys](https://kakunin.ai/dashboard/api-keys)
 
 ```bash
 cd typescript
 npm install
 KAKUNIN_API_KEY=your_key npx ts-node quickstart.ts
 ```
-
-The script will:
-1. Register a new agent
-2. Issue an X.509 certificate (signed by Kakunin CA via AWS KMS)
-3. Record three behaviour events (data access, trade execution, report generation)
-4. Queue a compliance report
 
 Expected output:
 ```
@@ -38,6 +47,31 @@ Expected output:
 ✅ Quickstart complete.
 ```
 
+---
+
+## Quickstart (Python)
+
+**Prerequisites:** Python ≥ 3.9
+
+```bash
+cd python
+pip install -r requirements.txt
+KAKUNIN_API_KEY=your_key python quickstart.py
+```
+
+---
+
+## Quickstart (curl)
+
+No SDK needed — works in any CI pipeline or shell:
+
+```bash
+export KAKUNIN_API_KEY=your_key
+bash curl/quickstart.sh
+```
+
+---
+
 ## API reference
 
 | Endpoint | Description |
@@ -50,6 +84,8 @@ Expected output:
 
 Full OpenAPI spec: [kakunin.ai/api/v1/openapi.json](https://kakunin.ai/api/v1/openapi.json)
 
+---
+
 ## Authentication
 
 All endpoints (except `/verify/*`) require a Bearer token:
@@ -58,25 +94,31 @@ All endpoints (except `/verify/*`) require a Bearer token:
 Authorization: Bearer YOUR_KAKUNIN_API_KEY
 ```
 
-Keys are created and revoked in [dashboard → API Keys](https://kakunin.ai/dashboard/api-keys).
+---
 
 ## Error handling
 
 | Status | Meaning |
 |---|---|
 | 401 | Invalid or revoked API key |
-| 422 | Quota exceeded (agent/cert/report limit) |
-| 429 | Rate limit exceeded — retry after `Retry-After` seconds |
+| 422 | Quota exceeded |
+| 429 | Rate limited — retry after `Retry-After` seconds |
 | 5xx | Internal error — contact ai@kakunin.ai |
 
 All errors return `{ "error": "string" }`.
 
-## More examples
+---
 
-Coming soon:
-- `python/` — Python SDK quickstart  
-- `curl/` — bare curl examples for CI pipelines
-- `node/` — CommonJS (require) version
+## Samples
+
+| Language | Location | Status |
+|---|---|---|
+| TypeScript | [`typescript/`](typescript/) | ✅ |
+| Python | [`python/`](python/) | ✅ |
+| curl | [`curl/`](curl/) | ✅ |
+| CommonJS (require) | `node/` | Coming soon |
+
+---
 
 ## Support
 
