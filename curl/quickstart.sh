@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 # Kakunin Quickstart — curl
 #
-# Demonstrates the full agent lifecycle using only curl + standard Unix tools.
+# Full agent lifecycle via bare HTTP — no SDK, no dependencies.
 # Works in any CI pipeline, Docker container, or shell.
 #
 # Prerequisites:
-#   curl, python3 (for JSON parsing) or jq
+#   curl, python3 (for JSON parsing)
+#   export KAKUNIN_API_KEY=kak_live_...
 #
 # Run:
-#   KAKUNIN_API_KEY=your_key bash curl/quickstart.sh
+#   chmod +x quickstart.sh && ./quickstart.sh
 
 set -euo pipefail
 
 BASE="https://kakunin.ai/api/v1"
 
 if [[ -z "${KAKUNIN_API_KEY:-}" ]]; then
-  echo "Error: KAKUNIN_API_KEY not set" >&2
+  echo "Error: KAKUNIN_API_KEY environment variable not set" >&2
   exit 1
 fi
 
@@ -36,7 +37,7 @@ api() {
 
 # 1. Register agent
 echo "→ Registering agent..."
-AGENT=$(api POST /agents '{"name":"sample-trading-bot-curl","description":"Demo agent — Kakunin curl quickstart"}')
+AGENT=$(api POST /agents '{"name":"sample-curl-agent","description":"Demo agent — Kakunin curl quickstart"}')
 AGENT_ID=$(echo "$AGENT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
 echo "  ✓ Agent registered: $AGENT_ID"
 
@@ -62,7 +63,13 @@ TODAY=$(date -u +%Y-%m-%d)
 THIRTY_AGO=$(python3 -c "from datetime import date,timedelta; print(date.today()-timedelta(days=30))")
 REPORT=$(api POST /reports/compliance "{\"agent_id\":\"$AGENT_ID\",\"period_start\":\"$THIRTY_AGO\",\"period_end\":\"$TODAY\"}")
 REPORT_ID=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin)['report_id'])")
-echo "  ✓ Report queued: $REPORT_ID"
+echo "  ✓ Report queued: $REPORT_ID (status: pending)"
+
+# 5. Verify certificate (public endpoint — no auth required)
+echo "→ Verifying certificate..."
+VERIFY=$(curl -sf "${BASE}/verify/${SERIAL}" | python3 -c "import sys,json; print(json.dumps(json.load(sys.stdin)['data']))")
+STATUS=$(echo "$VERIFY" | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])")
+echo "  ✓ Certificate status: ${STATUS}"
 
 echo ""
-echo "✅ Quickstart complete. View at https://kakunin.ai/dashboard/agents"
+echo "✅ Quickstart complete. View agent at https://kakunin.ai/dashboard/agents"

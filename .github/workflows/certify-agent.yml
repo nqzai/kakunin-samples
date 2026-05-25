@@ -1,0 +1,96 @@
+# Kakunin — Reusable agent certification workflow
+#
+# Call from any repo to certify an AI agent as part of CI/CD.
+#
+# Usage in your workflow:
+#
+#   jobs:
+#     certify:
+#       uses: nqzai/kakunin-samples/.github/workflows/certify-agent.yml@main
+#       with:
+#         agent_name: my-production-agent
+#         model: gpt-4o
+#         version: ${{ github.sha }}
+#       secrets:
+#         KAK_API_KEY: ${{ secrets.KAKUNIN_API_KEY }}
+
+on:
+  workflow_call:
+    inputs:
+      agent_name:
+        description: "Name of the AI agent to register/certify"
+        type: string
+        required: true
+      model:
+        description: "Model identifier (e.g. gpt-4o, claude-sonnet-4-5)"
+        type: string
+        required: true
+      version:
+        description: "Agent version (semver or git SHA)"
+        type: string
+        required: true
+      environment:
+        description: "Target environment: production | preview | development"
+        type: string
+        required: false
+        default: production
+    secrets:
+      KAK_API_KEY:
+        description: "Kakunin API key (kak_live_... or kak_test_...)"
+        required: true
+    outputs:
+      agent_id:
+        description: "Registered agent ID"
+        value: ${{ jobs.certify.outputs.agent_id }}
+      cert_serial:
+        description: "Issued certificate serial number"
+        value: ${{ jobs.certify.outputs.cert_serial }}
+
+jobs:
+  certify:
+    name: Register and certify agent
+    runs-on: ubuntu-latest
+    outputs:
+      agent_id: ${{ steps.certify.outputs.agent_id }}
+      cert_serial: ${{ steps.certify.outputs.cert_serial }}
+
+    steps:
+      - name: Register agent and issue X.509 certificate
+        id: certify
+        env:
+          KAK_API_KEY: ${{ secrets.KAK_API_KEY }}
+          AGENT_NAME: ${{ inputs.agent_name }}
+          MODEL: ${{ inputs.model }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          echo "→ Registering agent: ${AGENT_NAME} (${MODEL} @ ${VERSION})"
+
+          AGENT=$(curl -sf -X POST "https://kakunin.ai/api/v1/agents" \
+            -H "Authorization: Bearer ${KAK_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\":\"${AGENT_NAME}\",\"model\":\"${MODEL}\",\"version\":\"${VERSION}\"}")
+
+          AGENT_ID=$(echo "${AGENT}" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          echo "  ✓ Agent: ${AGENT_ID}"
+
+          CERT=$(curl -sf -X POST "https://kakunin.ai/api/v1/certificates" \
+            -H "Authorization: Bearer ${KAK_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_id\":\"${AGENT_ID}\"}")
+
+          SERIAL=$(echo "${CERT}" | grep -o '"serial_number":"[^"]*"' | cut -d'"' -f4)
+          echo "  ✓ Certificate: ${SERIAL}"
+
+          echo "agent_id=${AGENT_ID}" >> "$GITHUB_OUTPUT"
+          echo "cert_serial=${SERIAL}" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        run: |
+          echo "### ✅ Agent Certified" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent | ${{ inputs.agent_name }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Model | ${{ inputs.model }} @ ${{ inputs.version }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent ID | ${{ steps.certify.outputs.agent_id }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Cert Serial | ${{ steps.certify.outputs.cert_serial }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Verify | https://kakunin.ai/api/v1/verify/${{ steps.certify.outputs.cert_serial }} |" >> "$GITHUB_STEP_SUMMARY"

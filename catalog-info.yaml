@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: kakunin-samples
+  title: Kakunin AI Agent Compliance — Quickstarts
+  description: >
+    X.509 cryptographic identity + behavioral monitoring for AI agents.
+    MiCA & EU AI Act compliant in under 10 minutes.
+    Samples for TypeScript, Python, Go, curl, LangChain, LlamaIndex, CrewAI, AutoGen, and Next.js.
+  tags:
+    - ai-agents
+    - compliance
+    - x509
+    - mica
+    - eu-ai-act
+    - typescript
+    - python
+    - go
+    - langchain
+    - llamaindex
+    - crewai
+    - autogen
+    - fintech
+    - model-governance
+  links:
+    - url: https://kakunin.ai/docs
+      title: Documentation
+      icon: docs
+    - url: https://kakunin.ai/docs/api-reference
+      title: API Reference
+      icon: dashboard
+    - url: https://kakunin.ai/docs/python-sdk
+      title: Python SDK
+      icon: code
+    - url: https://kakunin.ai/sandbox
+      title: Sandbox (free)
+      icon: scaffolder
+  annotations:
+    github.com/project-slug: nqzai/kakunin-samples
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: library
+  lifecycle: production
+  owner: kakunin

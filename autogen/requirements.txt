@@ -1,0 +1,2 @@
+kakunin>=0.1.0
+pyautogen>=0.2.0
