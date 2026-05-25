@@ -8,5 +8,9 @@
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": ["*.ts"]
+  "include": ["quickstart.ts"],
+  "exclude": [
+    "cloudflare-worker-gateway.ts",
+    "supabase-rls-adapter.ts"
+  ]
 }

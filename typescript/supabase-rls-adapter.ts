@@ -1,3 +1,8 @@
+// NOTE: This file requires express, @supabase/supabase-js, and jsonwebtoken.
+// It is excluded from the default tsconfig. Install deps before use:
+//   npm install express @supabase/supabase-js jsonwebtoken
+//   npm install -D @types/express @types/jsonwebtoken
+
 /**
  * Kakunin Supabase RLS Adapter — Express Middleware
  * 

@@ -1,3 +1,6 @@
+// NOTE: This file requires @cloudflare/workers-types and is excluded from the
+// default tsconfig. Deploy via Wrangler: https://developers.cloudflare.com/workers/
+
 /**
  * Kakunin Edge Gateway — Cloudflare Worker (mTLS + Scope Verification)
  * 
