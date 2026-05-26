@@ -13,6 +13,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -72,9 +73,19 @@ func apiCall(method, path string, body any) (map[string]any, error) {
 
 func main() {
 	// 1. Register agent
+	// model_hash is required — binds the certificate to an exact model version.
+	// In production, hash your model weights/config. Here we derive a hash from
+	// the model identifier string as a quickstart convenience.
+	modelID := "trading-bot-ml"
+	rawHash := sha256.Sum256([]byte(modelID))
+	modelHash := fmt.Sprintf("sha256:%x", rawHash)
+
 	fmt.Println("→ Registering agent...")
 	agent, err := apiCall("POST", "/agents", map[string]any{
 		"name":        "sample-go-agent",
+		"model":       modelID,
+		"version":     "1.0.0",
+		"model_hash":  modelHash,
 		"description": "Demo agent from Kakunin Go quickstart",
 	})
 	if err != nil {
@@ -85,25 +96,29 @@ func main() {
 	fmt.Printf("  ✓ Agent registered: %s\n", agentID)
 
 	// 2. Issue X.509 certificate
+	// Endpoint: POST /agents/{id}/certify — no request body required.
+	// Response fields: serial_number, certificate_pem, expires_at
+	//   (NOT POST /certificates with agent_id body, NOT valid_until)
 	fmt.Println("→ Issuing certificate...")
-	cert, err := apiCall("POST", "/certificates", map[string]any{
-		"agent_id": agentID,
-	})
+	cert, err := apiCall("POST", "/agents/"+agentID+"/certify", nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 	serial := cert["serial_number"].(string)
-	validUntil := cert["valid_until"].(string)
-	fmt.Printf("  ✓ Certificate issued: %s (valid until %s)\n", serial, validUntil)
+	expiresAt := cert["expires_at"].(string)
+	fmt.Printf("  ✓ Certificate issued: %s (valid until %s)\n", serial, expiresAt)
 
-	// 3. Record behaviour event
+	// 3. Record behaviour events
+	// Body fields are camelCase: agentId, actionType, details
+	// Valid actionType values: api_call, authentication_attempt, authentication_failure,
+	//   data_access, data_mutation, transaction_initiated, transaction_anomaly,
+	//   unauthorized_access_attempt, message_signed, message_verification_failed
 	fmt.Println("→ Recording behaviour event...")
 	event, err := apiCall("POST", "/events", map[string]any{
-		"agent_id": agentID,
-		"action":   "data_access",
-		"resource": "market-data-feed",
-		"metadata": map[string]any{"symbols": []string{"BTC", "ETH"}},
+		"agentId":    agentID,
+		"actionType": "data_access",
+		"details":    map[string]any{"source": "market-data-feed", "symbols": []string{"BTC", "ETH"}},
 	})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)

@@ -28,9 +28,12 @@ export async function middleware(req: NextRequest) {
       );
     }
 
-    // Forward verified agent ID to route handlers via header
+    // Forward the cert serial to route handlers as the verified agent identifier.
+    // VerifiedAgent has: status, serial, agent_name, operator_org, permitted_actions.
+    // There is no agent.id field — use agent.serial as the unique identity token.
     const headers = new Headers(req.headers);
-    headers.set('x-verified-agent-id', agent.id);
+    headers.set('x-verified-agent-serial', agent.serial);
+    headers.set('x-verified-agent-name', agent.agent_name ?? '');
     return NextResponse.next({ request: { headers } });
   }
 

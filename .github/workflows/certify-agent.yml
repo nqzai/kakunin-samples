@@ -65,20 +65,26 @@ jobs:
         run: |
           echo "→ Registering agent: ${AGENT_NAME} (${MODEL} @ ${VERSION})"
 
+          # model_hash is required — binds the certificate to an exact model version.
+          # Here we derive a SHA-256 hash of "MODEL@VERSION" as a CI convenience;
+          # in production pipelines, hash your model weights/config artifact instead.
+          MODEL_HASH="sha256:$(echo -n "${MODEL}@${VERSION}" | sha256sum | awk '{print $1}')"
+
           AGENT=$(curl -sf -X POST "https://kakunin.ai/api/v1/agents" \
             -H "Authorization: Bearer ${KAK_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d "{\"name\":\"${AGENT_NAME}\",\"model\":\"${MODEL}\",\"version\":\"${VERSION}\"}")
+            -d "{\"name\":\"${AGENT_NAME}\",\"model\":\"${MODEL}\",\"version\":\"${VERSION}\",\"model_hash\":\"${MODEL_HASH}\"}")
 
-          AGENT_ID=$(echo "${AGENT}" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          AGENT_ID=$(echo "${AGENT}" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['id'])")
           echo "  ✓ Agent: ${AGENT_ID}"
 
-          CERT=$(curl -sf -X POST "https://kakunin.ai/api/v1/certificates" \
+          # Certify endpoint: POST /agents/{id}/certify — no request body.
+          # (NOT POST /certificates with agent_id in body)
+          CERT=$(curl -sf -X POST "https://kakunin.ai/api/v1/agents/${AGENT_ID}/certify" \
             -H "Authorization: Bearer ${KAK_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d "{\"agent_id\":\"${AGENT_ID}\"}")
+            -H "Content-Type: application/json")
 
-          SERIAL=$(echo "${CERT}" | grep -o '"serial_number":"[^"]*"' | cut -d'"' -f4)
+          SERIAL=$(echo "${CERT}" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['serial_number'])")
           echo "  ✓ Certificate: ${SERIAL}"
 
           echo "agent_id=${AGENT_ID}" >> "$GITHUB_OUTPUT"

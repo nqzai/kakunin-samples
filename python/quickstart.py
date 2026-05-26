@@ -17,8 +17,8 @@ Run:
 
 import os
 import asyncio
+import hashlib
 import httpx
-from datetime import datetime, timedelta
 
 BASE_URL = "https://kakunin.ai/api/v1"
 API_KEY = os.environ.get("KAKUNIN_API_KEY")
@@ -43,38 +43,67 @@ async def api(client: httpx.AsyncClient, method: str, path: str, body: dict = No
 async def main() -> None:
     async with httpx.AsyncClient(timeout=30) as client:
         # 1. Register agent
+        # model_hash is required — binds the certificate to an exact model version.
+        # In production: hash your model weights/config file. Here we derive a hash
+        # from the model identifier string as a quickstart convenience.
+        model_id = "trading-bot-ml"
+        model_hash = "sha256:" + hashlib.sha256(model_id.encode()).hexdigest()
+
         print("→ Registering agent...")
         agent = await api(client, "POST", "/agents", {
             "name": "sample-trading-bot",
+            "model": model_id,
+            "version": "1.0.0",
+            "model_hash": model_hash,
             "description": "Demo agent for Kakunin Python quickstart",
         })
         print(f"  ✓ Agent registered: {agent['id']}")
 
         # 2. Issue X.509 certificate
+        # POST /agents/{id}/certify — no request body required.
+        # Response fields: serial_number, certificate_pem, expires_at (not valid_until, not pem)
         print("→ Issuing certificate...")
-        cert = await api(client, "POST", "/certificates", {"agent_id": agent["id"]})
-        print(f"  ✓ Certificate issued: {cert['serial_number']} (valid until {cert['valid_until']})")
-        print(f"  Certificate PEM preview: {cert['pem'].splitlines()[1][:40]}...")
+        cert = await api(client, "POST", f"/agents/{agent['id']}/certify")
+        print(f"  ✓ Certificate issued: {cert['serial_number']} (valid until {cert['expires_at']})")
+        print(f"  Certificate PEM preview: {cert['certificate_pem'].splitlines()[1][:40]}...")
 
         # 3. Record behaviour events
+        # Body fields are camelCase: agentId, actionType, details
+        # Valid actionType values: api_call, authentication_attempt, authentication_failure,
+        #   data_access, data_mutation, transaction_initiated, transaction_anomaly,
+        #   unauthorized_access_attempt, message_signed, message_verification_failed
         print("→ Recording behaviour events...")
-        actions = [
-            {"action": "data_access", "resource": "market-data-feed", "metadata": {"symbols": ["BTC", "ETH"]}},
-            {"action": "trade_execution", "resource": "exchange-api", "metadata": {"side": "buy", "amount": 0.1}},
-            {"action": "report_generation", "resource": "compliance-module", "metadata": {"period": "2026-05"}},
+        events = [
+            {
+                "agentId": agent["id"],
+                "actionType": "data_access",
+                "details": {"source": "market-data-feed", "symbols": ["BTC", "ETH"]},
+            },
+            {
+                "agentId": agent["id"],
+                "actionType": "transaction_initiated",
+                "details": {"side": "buy", "amount": 0.1, "instrument": "BTC/USD"},
+            },
+            {
+                "agentId": agent["id"],
+                "actionType": "api_call",
+                "details": {"endpoint": "compliance-module", "period": "2026-05"},
+            },
         ]
-        for event in actions:
-            result = await api(client, "POST", "/events", {"agent_id": agent["id"], **event})
-            print(f"  ✓ Event recorded: {event['action']} | risk_score={result['risk_score']:.3f} ({result['risk_band']})")
+        for ev in events:
+            result = await api(client, "POST", "/events", ev)
+            print(f"  ✓ Event recorded: {ev['actionType']} | risk_score={result['risk_score']:.3f} ({result['risk_band']})")
 
         # 4. Request compliance report
+        # Body: agentId (camelCase), windowDays (integer days, default 30).
+        # Not period_start/period_end — use windowDays instead.
+        # Response: id (not report_id), status, title
         print("→ Requesting compliance report...")
         report = await api(client, "POST", "/reports/compliance", {
-            "agent_id": agent["id"],
-            "period_start": (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d"),
-            "period_end": datetime.utcnow().strftime("%Y-%m-%d"),
+            "agentId": agent["id"],
+            "windowDays": 30,
         })
-        print(f"  ✓ Report queued: {report['report_id']} (status: {report['status']})")
+        print(f"  ✓ Report queued: {report['id']} (status: {report['status']})")
         print("  Report ready in ~30s — check dashboard → Reports")
 
         print("\n✅ Quickstart complete. Open https://kakunin.ai/dashboard/agents to view your agent.")
