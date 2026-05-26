@@ -1,10 +1,10 @@
 /**
  * Kakunin Quickstart — TypeScript
  *
- * Demonstrates the full agent lifecycle in under 50 lines:
+ * Demonstrates the full agent lifecycle:
  *   1. Register an agent
- *   2. Issue an X.509 certificate
- *   3. Stream behaviour events
+ *   2. Issue an X.509 certificate  (POST /agents/{id}/certify)
+ *   3. Record behaviour events
  *   4. Request a compliance report
  *
  * Prerequisites:
@@ -14,6 +14,8 @@
  *   npm install
  *   KAKUNIN_API_KEY=your_key npx ts-node quickstart.ts
  */
+
+import { createHash } from 'crypto';
 
 const BASE_URL = 'https://kakunin.ai/api/v1';
 const API_KEY = process.env.KAKUNIN_API_KEY;
@@ -41,46 +43,65 @@ async function api<T>(method: string, path: string, body?: unknown): Promise<T> 
 
 async function main() {
   // 1. Register agent
+  // model_hash is required — binds the certificate to an exact model version.
+  // In production: hash your model weights/config. Here we derive one from the
+  // model identifier string as a quickstart convenience.
+  const modelId = 'trading-bot-ml';
+  const modelHash = 'sha256:' + createHash('sha256').update(modelId).digest('hex');
+
   console.log('→ Registering agent...');
   const agent = await api<{ id: string; name: string }>('POST', '/agents', {
     name: 'sample-trading-bot',
+    model: modelId,
+    version: '1.0.0',
+    model_hash: modelHash,
     description: 'Demo agent for Kakunin quickstart',
   });
   console.log(`  ✓ Agent registered: ${agent.id}`);
 
   // 2. Issue X.509 certificate
+  // Endpoint: POST /agents/{id}/certify  — no request body required.
+  // Response fields: serial_number, certificate_pem, expires_at
+  //   (NOT pem, NOT valid_until — those are wrong field names)
   console.log('→ Issuing certificate...');
-  const cert = await api<{ pem: string; serial_number: string; valid_until: string }>(
-    'POST', '/certificates', { agent_id: agent.id }
+  const cert = await api<{ certificate_pem: string; serial_number: string; expires_at: string }>(
+    'POST', `/agents/${agent.id}/certify`
   );
-  console.log(`  ✓ Certificate issued: ${cert.serial_number} (valid until ${cert.valid_until})`);
-  console.log(`  Certificate PEM preview: ${cert.pem.split('\n')[1].slice(0, 40)}...`);
+  console.log(`  ✓ Certificate issued: ${cert.serial_number} (valid until ${cert.expires_at})`);
+  console.log(`  Certificate PEM preview: ${cert.certificate_pem.split('\n')[1].slice(0, 40)}...`);
 
-  // 3. Stream behaviour events
+  // 3. Record behaviour events
+  // All body fields are camelCase: agentId, actionType, details
+  // Valid actionType values: api_call, authentication_attempt, authentication_failure,
+  //   data_access, data_mutation, transaction_initiated, transaction_anomaly,
+  //   unauthorized_access_attempt, message_signed, message_verification_failed
+  // Response: id (not event_id), risk_score, risk_band
   console.log('→ Recording behaviour events...');
-  const actions = [
-    { action: 'data_access', resource: 'market-data-feed', metadata: { symbols: ['BTC', 'ETH'] } },
-    { action: 'trade_execution', resource: 'exchange-api', metadata: { side: 'buy', amount: 0.1 } },
-    { action: 'report_generation', resource: 'compliance-module', metadata: { period: '2026-05' } },
-  ];
+  const events = [
+    { actionType: 'data_access',           details: { source: 'market-data-feed', symbols: ['BTC', 'ETH'] } },
+    { actionType: 'transaction_initiated', details: { side: 'buy', amount: 0.1, instrument: 'BTC/USD' } },
+    { actionType: 'api_call',              details: { endpoint: 'compliance-module', period: '2026-05' } },
+  ] as const;
 
-  for (const event of actions) {
-    const result = await api<{ event_id: string; risk_score: number; risk_band: string }>(
-      'POST', '/events', { agent_id: agent.id, ...event }
+  for (const ev of events) {
+    const result = await api<{ id: string; risk_score: number; risk_band: string }>(
+      'POST', '/events', { agentId: agent.id, ...ev }
     );
-    console.log(`  ✓ Event recorded: ${event.action} | risk_score=${result.risk_score.toFixed(3)} (${result.risk_band})`);
+    console.log(`  ✓ Event recorded: ${ev.actionType} | risk_score=${result.risk_score.toFixed(3)} (${result.risk_band})`);
   }
 
   // 4. Request compliance report
+  // Body: agentId (camelCase), windowDays (integer, default 30).
+  //   NOT period_start/period_end — those are not accepted fields.
+  // Response: id (not report_id), status, title
   console.log('→ Requesting compliance report...');
-  const report = await api<{ report_id: string; status: string }>(
+  const report = await api<{ id: string; status: string }>(
     'POST', '/reports/compliance', {
-      agent_id: agent.id,
-      period_start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-      period_end: new Date().toISOString().slice(0, 10),
+      agentId: agent.id,
+      windowDays: 30,
     }
   );
-  console.log(`  ✓ Report queued: ${report.report_id} (status: ${report.status})`);
+  console.log(`  ✓ Report queued: ${report.id} (status: ${report.status})`);
   console.log('  Report will be ready in ~30 seconds — check dashboard → Reports');
 
   console.log('\n✅ Quickstart complete. Open https://kakunin.ai/dashboard/agents to view your agent.');

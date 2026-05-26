@@ -5,7 +5,7 @@
 # Works in any CI pipeline, Docker container, or shell.
 #
 # Prerequisites:
-#   curl, python3 (for JSON parsing)
+#   curl, python3, openssl (for model_hash)
 #   export KAKUNIN_API_KEY=kak_live_...
 #
 # Run:
@@ -36,33 +36,47 @@ api() {
 }
 
 # 1. Register agent
+# model_hash is required — binds the certificate to an exact model version.
+# Here we derive a SHA-256 hash of the model identifier string as a convenience;
+# in production, hash your actual model weights or config file instead.
+MODEL_ID="trading-bot-ml"
+MODEL_HASH="sha256:$(echo -n "$MODEL_ID" | openssl dgst -sha256 -hex | awk '{print $2}')"
+
 echo "→ Registering agent..."
-AGENT=$(api POST /agents '{"name":"sample-curl-agent","description":"Demo agent — Kakunin curl quickstart"}')
+AGENT=$(api POST /agents "{\"name\":\"sample-curl-agent\",\"model\":\"${MODEL_ID}\",\"version\":\"1.0.0\",\"model_hash\":\"${MODEL_HASH}\",\"description\":\"Demo agent — Kakunin curl quickstart\"}")
 AGENT_ID=$(echo "$AGENT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
 echo "  ✓ Agent registered: $AGENT_ID"
 
 # 2. Issue X.509 certificate
+# Endpoint: POST /agents/{id}/certify  — no request body required.
+# Response fields: serial_number, certificate_pem, expires_at
+#   (NOT /certificates, NOT agent_id body, NOT valid_until)
 echo "→ Issuing certificate..."
-CERT=$(api POST /certificates "{\"agent_id\":\"$AGENT_ID\"}")
+CERT=$(api POST "/agents/${AGENT_ID}/certify")
 SERIAL=$(echo "$CERT" | python3 -c "import sys,json; print(json.load(sys.stdin)['serial_number'])")
-VALID_UNTIL=$(echo "$CERT" | python3 -c "import sys,json; print(json.load(sys.stdin)['valid_until'])")
-echo "  ✓ Certificate issued: $SERIAL (valid until $VALID_UNTIL)"
+EXPIRES=$(echo "$CERT" | python3 -c "import sys,json; print(json.load(sys.stdin)['expires_at'])")
+echo "  ✓ Certificate issued: $SERIAL (valid until $EXPIRES)"
 
 # 3. Record behaviour events
+# Body fields are camelCase: agentId, actionType, details (not action/resource/metadata/agent_id)
+# Valid actionType values: api_call, authentication_attempt, authentication_failure,
+#   data_access, data_mutation, transaction_initiated, transaction_anomaly,
+#   unauthorized_access_attempt, message_signed, message_verification_failed
 echo "→ Recording behaviour events..."
 
-for ACTION in data_access trade_execution report_generation; do
-  EVENT=$(api POST /events "{\"agent_id\":\"$AGENT_ID\",\"action\":\"$ACTION\",\"resource\":\"demo-resource\",\"metadata\":{}}")
+for ACTION_TYPE in data_access transaction_initiated api_call; do
+  EVENT=$(api POST /events "{\"agentId\":\"$AGENT_ID\",\"actionType\":\"$ACTION_TYPE\",\"details\":{\"source\":\"demo\"}}")
   SCORE=$(echo "$EVENT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d['risk_score']:.3f} ({d['risk_band']})\")")
-  echo "  ✓ Event recorded: $ACTION | risk_score=$SCORE"
+  echo "  ✓ Event recorded: $ACTION_TYPE | risk_score=$SCORE"
 done
 
 # 4. Queue compliance report
+# Body: agentId (camelCase), windowDays (integer).
+#   NOT period_start/period_end — use windowDays instead.
+# Response: id (not report_id)
 echo "→ Requesting compliance report..."
-TODAY=$(date -u +%Y-%m-%d)
-THIRTY_AGO=$(python3 -c "from datetime import date,timedelta; print(date.today()-timedelta(days=30))")
-REPORT=$(api POST /reports/compliance "{\"agent_id\":\"$AGENT_ID\",\"period_start\":\"$THIRTY_AGO\",\"period_end\":\"$TODAY\"}")
-REPORT_ID=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin)['report_id'])")
+REPORT=$(api POST /reports/compliance "{\"agentId\":\"$AGENT_ID\",\"windowDays\":30}")
+REPORT_ID=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
 echo "  ✓ Report queued: $REPORT_ID (status: pending)"
 
 # 5. Verify certificate (public endpoint — no auth required)
