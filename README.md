@@ -7,7 +7,7 @@
 
 > Comply with MiCA Art. 72 and EU AI Act in under 10 minutes.
 
-End-to-end integration samples for the [Kakunin](https://kakunin.ai) AI agent compliance API.
+End-to-end integration samples for the [Kakunin](https://www.kakunin.ai) AI agent compliance API.
 
 **⭐ If this saves you compliance headaches, star this repo.**
 
