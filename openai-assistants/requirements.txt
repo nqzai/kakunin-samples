@@ -1,0 +1,3 @@
+kakunin
+openai
+python-dotenv
