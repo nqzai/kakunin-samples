@@ -7,6 +7,12 @@ Cryptographic compliance checking and audit logging for Google Antigravity SDK a
 - **`KakuninPreToolCallDecideHook`**: A pre-tool callback that checks if the active agent has the required Kakunin scopes before allowing tool execution.
 - **`get_kakunin_hooks`**: A convenience factory that returns a bundle of hooks to track sessions, turns (prompts and responses), tool execution successes, and anomalies.
 
+## Interactive Notebook / Colab
+
+You can run this demo directly in your browser or Jupyter environment:
+👉 **[Jupyter Playground Notebook](./google_antigravity_playground.ipynb)**
+
+
 ## Prerequisites
 
 - Python 3.10+
