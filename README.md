@@ -23,7 +23,8 @@ End-to-end integration samples for the [Kakunin](https://www.kakunin.ai) AI agen
 | Python | [`python/`](./python/) | Same lifecycle, async httpx client |
 | curl / shell | [`curl/`](./curl/) | Bare HTTP — works in any CI pipeline |
 | Go | [`go/`](./go/) | stdlib only, no dependencies |
-| **LangChain** | [`langchain/`](./langchain/) | `KakuninToolGuard` — scope-enforced tool calls |
+| **LangChain (Python)** | [`langchain/`](./langchain/) | `KakuninToolGuard` — scope-enforced tool calls |
+| **LangChain (TypeScript)** | [`typescript/langchain-guard/`](./typescript/langchain-guard/) | `KakuninToolGuard` — scope-enforced tool calls for JS/TS |
 | **LlamaIndex** | [`llamaindex/`](./llamaindex/) | `KakuninFunctionToolGuard` — RAG tools with cert verification |
 | **CrewAI** | [`crewai/`](./crewai/) | `KakuninCrewAgent` — per-agent certs in multi-agent crews |
 | **AutoGen** | [`autogen/`](./autogen/) | `KakuninConversableAgent` — cert-gated replies |

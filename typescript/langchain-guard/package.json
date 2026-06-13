@@ -1,0 +1,21 @@
+{
+  "name": "kakunin-typescript-langchain-sample",
+  "version": "1.0.0",
+  "description": "Kakunin TypeScript LangChain integration sample",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@kakunin/sdk": "file:../../../kakunin/sdk/kakunin-sdk",
+    "@kakunin/langchain": "file:../../../kakunin/sdk/typescript/langchain",
+    "@langchain/core": "^0.3.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
