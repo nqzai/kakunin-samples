@@ -29,6 +29,8 @@ End-to-end integration samples for the [Kakunin](https://www.kakunin.ai) AI agen
 | **CrewAI** | [`crewai/`](./crewai/) | `KakuninCrewAgent` — per-agent certs in multi-agent crews |
 | **AutoGen** | [`autogen/`](./autogen/) | `KakuninConversableAgent` — cert-gated replies |
 | **Next.js** | [`nextjs/`](./nextjs/) | App Router API routes + middleware cert enforcement |
+| **Vercel AI SDK** | [`typescript/vercel-ai/`](./typescript/vercel-ai/) | `createKakuninTools` — compliance tools for the Vercel AI SDK |
+
 
 ---
 
