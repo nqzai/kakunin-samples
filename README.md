@@ -31,6 +31,8 @@ End-to-end integration samples for the [Kakunin](https://www.kakunin.ai) AI agen
 | **Next.js** | [`nextjs/`](./nextjs/) | App Router API routes + middleware cert enforcement |
 | **Vercel AI SDK** | [`typescript/vercel-ai/`](./typescript/vercel-ai/) | `createKakuninTools` — compliance tools for the Vercel AI SDK |
 | **Vercel AI SDK + Next.js (Chat)** | [`nextjs-vercel-ai/`](./nextjs-vercel-ai/) | Stream-chat interface using Vercel AI SDK tools & Deploy Button |
+| **Mastra** | [`typescript/mastra/`](./typescript/mastra/) | `KakuninIntegration` — compliance tools for Mastra agents & workflows |
+
 
 
 
