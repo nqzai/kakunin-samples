@@ -7,8 +7,8 @@
     "start": "ts-node index.ts"
   },
   "dependencies": {
-    "@kakunin/sdk": "file:../../../kakunin/sdk/kakunin-sdk",
-    "@kakunin/mastra": "file:../../../kakunin/sdk/mastra",
+    "@kakunin/sdk": "^0.2.0",
+    "@kakunin/mastra": "^0.1.0",
     "mastra": "^0.1.0",
     "dotenv": "^16.4.5",
     "zod": "^3.22.0"

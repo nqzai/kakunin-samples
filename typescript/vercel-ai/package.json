@@ -7,8 +7,8 @@
     "start": "ts-node index.ts"
   },
   "dependencies": {
-    "@kakunin/sdk": "file:../../../kakunin/sdk/kakunin-sdk",
-    "@kakunin/ai-sdk": "file:../../../kakunin/sdk/vercel-ai",
+    "@kakunin/sdk": "^0.2.0",
+    "@kakunin/ai-sdk": "^0.1.0",
     "ai": "^4.0.0",
     "dotenv": "^16.4.5",
     "zod": "^3.22.0"
