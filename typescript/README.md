@@ -29,4 +29,4 @@ KAKUNIN_API_KEY=your_kak_test_key_here npx ts-node quickstart.ts
 
 - **[official documentation](https://www.kakunin.ai/)**: Kakunin Home Page
 
-- **[←Back to README.md](README.md)**
+- **[←Back to README.md](kakunin-samples/README.md)**
