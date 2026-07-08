@@ -4,7 +4,7 @@ Register an AI agent, issue its X.509 certificate, record behaviour events, and 
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - API key from [dashboard → API Keys](https://kakunin.ai/dashboard/api-keys)
 
 ## Run
