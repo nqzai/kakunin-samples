@@ -13,6 +13,22 @@ End-to-end integration samples for the [Kakunin](https://www.kakunin.ai) AI agen
 
 **Kakunin issues X.509 cryptographic identities to AI agents, monitors their behaviour in real time, and generates MiCA & EU AI Act compliance reports — all via API.**
 
+## Part of the Kakunin open-source project
+
+This repo is the runnable examples. The project itself is open source, top to bottom:
+
+| Repo | What | License |
+|---|---|---|
+| [**kakunin-core**](https://github.com/nqzai/kakunin-core) | The platform — certificate authority, risk engine, audit pipeline | AGPL-3.0 |
+| [kakunin-sdk-typescript](https://github.com/nqzai/kakunin-sdk-typescript) | `@kakunin/sdk` | Apache-2.0 |
+| [kakunin-sdk-python](https://github.com/nqzai/kakunin-sdk-python) | `kakunin` | Apache-2.0 |
+| [kakunin-integrations](https://github.com/nqzai/kakunin-integrations) | middleware · langchain · mastra · ai-sdk | Apache-2.0 |
+| [kakunin-mcp](https://github.com/nqzai/kakunin-mcp) | `@kakunin/mcp` | Apache-2.0 |
+| **kakunin-samples** (this repo) | End-to-end examples | MIT |
+
+New here? Start with a [TypeScript](https://github.com/nqzai/kakunin-sdk-typescript) or
+[Python](https://github.com/nqzai/kakunin-sdk-python) SDK, then run a sample below.
+
 ---
 
 ## Samples
