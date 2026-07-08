@@ -13,3 +13,5 @@ labels: enhancement, good first issue
 **Notes**
 <!-- Anything specific about how this framework runs tools/actions that affects where the
      certificate + scope check should hook in. See CONTRIBUTING.md for the skeleton. -->
+
+> 💡 Want to work on this yourself? After opening, comment `/assign` on the issue to claim it and avoid duplicate work.

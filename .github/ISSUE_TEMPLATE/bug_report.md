@@ -15,3 +15,5 @@ labels: bug
 **Environment** (framework version, runtime/OS, `kak_test_` or `kak_live_`)
 
 <!-- Security issues: do NOT open a public issue. See the platform SECURITY.md. -->
+
+> 💡 Want to work on this yourself? After opening, comment `/assign` on the issue to claim it and avoid duplicate work.
