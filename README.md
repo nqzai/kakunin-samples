@@ -64,7 +64,7 @@ cd typescript && npm install
 KAKUNIN_API_KEY=kak_live_... npx ts-node quickstart.ts
 ```
 
-**Python (3.9+):**
+**Python (3.10+):**
 ```bash
 cd python && pip install -r requirements.txt
 KAKUNIN_API_KEY=kak_live_... python quickstart.py
