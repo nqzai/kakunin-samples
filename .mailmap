@@ -1,0 +1,4 @@
+# Canonical identities. Collapses multiple git author strings for the same
+# person so `git shortlog -sne` and GitHub contributor counts are truthful.
+Palash Bagchi <palash@nqz.ai> nqzai <palash@nqz.ai>
+Palash Bagchi <palash@nqz.ai> nqzai <palashbagchi@gmail.com>
