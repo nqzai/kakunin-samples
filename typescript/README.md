@@ -11,10 +11,6 @@ This directory contains various implementation examples of Kakunin using TypeScr
 - **[supabase-rls-adapter.ts](./supabase-rls-adapter.ts)**: Demonstrates binding Kakunin with Supabase Row Level Security (RLS).
 - **[cloudflare-worker-gateway.ts](./cloudflare-worker-gateway.ts)**: An example of implementing an edge gateway using Cloudflare Workers.
 
-## More INFO
-
-- **[official documentation](https://www.kakunin.ai/)**: Kakunin Home Page
-
 
 ## Prerequisites
 
@@ -27,6 +23,10 @@ To install dependencies and run the quickstart example, execute the following co
 ```bash
 npm install
 KAKUNIN_API_KEY=your_kak_test_key_here npx ts-node quickstart.ts
+```
 
+## More INFO
 
-[←Back to Quickstart](README.md#quickstart)
+- **[official documentation](https://www.kakunin.ai/)**: Kakunin Home Page
+
+- **[←Back to Quickstart](README.md#quickstart)**
