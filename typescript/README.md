@@ -15,7 +15,7 @@ This directory contains various implementation examples of Kakunin using TypeScr
 ## Prerequisites
 
 - **Node.js**: Version 18 or higher.
-- **API Key**: A valid `kak_test_` API key.
+- **API Key**: API key from [dashboard → API Keys](https://kakunin.ai/dashboard/api-keys)
 
 ## Getting Started
 
