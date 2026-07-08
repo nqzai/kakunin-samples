@@ -4,7 +4,7 @@ Full-stack example: agent registration, certificate issuance, and middleware-lev
 
 ## What this covers
 
-- `lib/kakunin.ts` — singleton SDK init (reads `KAK_API_KEY` from env)
+- `lib/kakunin.ts` — singleton SDK init (reads `KAK_API_KEY` or `KAKUNIN_API_KEY` from env)
 - `app/api/v1/agents/route.ts` — register + certify an agent via POST
 - `middleware.ts` — enforce cert serial on all `/api/agent/*` routes
 
