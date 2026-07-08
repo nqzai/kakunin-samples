@@ -21,12 +21,12 @@ This directory contains various implementation examples of Kakunin using TypeScr
 
 To install dependencies and run the quickstart example, execute the following commands:
 ```bash
-npm install
-KAKUNIN_API_KEY=your_kak_test_key_here npx ts-node quickstart.ts
+cd typescript && npm install
+KAKUNIN_API_KEY=kak_live_... npx ts-node quickstart.ts
 ```
 
 ## More INFO
 
-- **[official documentation](https://www.kakunin.ai/)**: Kakunin Home Page
+- **[official documentation](https://www.kakunin.ai/)**
 
 - **[←Back to README.md](https://github.com/FarbodDaneshjoo/kakunin-samples/blob/main/README.md)**
