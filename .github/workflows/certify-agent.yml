@@ -6,7 +6,7 @@
 #
 #   jobs:
 #     certify:
-#       uses: nqzai/kakunin-samples/.github/workflows/certify-agent.yml@main
+#       uses: kakunin-ai/kakunin-samples/.github/workflows/certify-agent.yml@main
 #       with:
 #         agent_name: my-production-agent
 #         model: gpt-4o

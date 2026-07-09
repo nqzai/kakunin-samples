@@ -42,7 +42,7 @@ With a revoked cert: `403 Certificate revoked`
 
 ## Deploy to Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnqzai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs&env=KAK_API_KEY&envDescription=Get%20your%20API%20key%20from%20kakunin.ai%2Fdashboard&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard%2Fapi-keys)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkakunin-ai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs&env=KAK_API_KEY&envDescription=Get%20your%20API%20key%20from%20kakunin.ai%2Fdashboard&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard%2Fapi-keys)
 
 ## Related
 

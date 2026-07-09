@@ -36,7 +36,7 @@ metadata:
       title: Sandbox (free)
       icon: scaffolder
   annotations:
-    github.com/project-slug: nqzai/kakunin-samples
+    github.com/project-slug: kakunin-ai/kakunin-samples
     backstage.io/techdocs-ref: dir:.
 spec:
   type: library

@@ -1,7 +1,7 @@
 # Kakunin Samples — AI agent identity & compliance examples (X.509, scope enforcement, LangChain/CrewAI/Next.js)
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/nqzai/kakunin-samples)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnqzai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs&env=KAK_API_KEY&envDescription=Get%20your%20API%20key%20from%20kakunin.ai%2Fdashboard&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard%2Fapi-keys)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kakunin-ai/kakunin-samples)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkakunin-ai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs&env=KAK_API_KEY&envDescription=Get%20your%20API%20key%20from%20kakunin.ai%2Fdashboard&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard%2Fapi-keys)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 [![kakunin.ai](https://img.shields.io/badge/docs-kakunin.ai-3aaa35?style=flat-square)](https://kakunin.ai/docs)
 
@@ -19,15 +19,15 @@ This repo is the runnable examples. The project itself is open source, top to bo
 
 | Repo | What | License |
 |---|---|---|
-| [**kakunin-core**](https://github.com/nqzai/kakunin-core) | The platform — certificate authority, risk engine, audit pipeline | AGPL-3.0 |
-| [kakunin-sdk-typescript](https://github.com/nqzai/kakunin-sdk-typescript) | `@kakunin/sdk` | Apache-2.0 |
-| [kakunin-sdk-python](https://github.com/nqzai/kakunin-sdk-python) | `kakunin` | Apache-2.0 |
-| [kakunin-integrations](https://github.com/nqzai/kakunin-integrations) | middleware · langchain · mastra · ai-sdk | Apache-2.0 |
-| [kakunin-mcp](https://github.com/nqzai/kakunin-mcp) | `@kakunin/mcp` | Apache-2.0 |
+| [**kakunin-core**](https://github.com/kakunin-ai/kakunin-core) | The platform — certificate authority, risk engine, audit pipeline | AGPL-3.0 |
+| [kakunin-sdk-typescript](https://github.com/kakunin-ai/kakunin-sdk-typescript) | `@kakunin/sdk` | Apache-2.0 |
+| [kakunin-sdk-python](https://github.com/kakunin-ai/kakunin-sdk-python) | `kakunin` | Apache-2.0 |
+| [kakunin-integrations](https://github.com/kakunin-ai/kakunin-integrations) | middleware · langchain · mastra · ai-sdk | Apache-2.0 |
+| [kakunin-mcp](https://github.com/kakunin-ai/kakunin-mcp) | `@kakunin/mcp` | Apache-2.0 |
 | **kakunin-samples** (this repo) | End-to-end examples | MIT |
 
-New here? Start with a [TypeScript](https://github.com/nqzai/kakunin-sdk-typescript) or
-[Python](https://github.com/nqzai/kakunin-sdk-python) SDK, then run a sample below.
+New here? Start with a [TypeScript](https://github.com/kakunin-ai/kakunin-sdk-typescript) or
+[Python](https://github.com/kakunin-ai/kakunin-sdk-python) SDK, then run a sample below.
 
 ---
 
@@ -107,7 +107,7 @@ See [`langchain/`](./langchain/) for a full example. Full reference: [kakunin.ai
 ```yaml
 jobs:
   certify:
-    uses: nqzai/kakunin-samples/.github/workflows/certify-agent.yml@main
+    uses: kakunin-ai/kakunin-samples/.github/workflows/certify-agent.yml@main
     with:
       agent_name: my-production-agent
       model: gpt-4o

@@ -9,7 +9,7 @@ you don't need to provision any infrastructure.
 - **Solo-maintainer project (for now).** Best-effort support; triage target is one week.
   Small, focused PRs get reviewed fastest.
 - **Security issues:** never open a public issue — see the platform's
-  [SECURITY.md](https://github.com/nqzai/kakunin-core/blob/main/SECURITY.md).
+  [SECURITY.md](https://github.com/kakunin-ai/kakunin-core/blob/main/SECURITY.md).
 - Contributions are licensed under **MIT** (this repo's license). A lightweight CLA check
   runs on your first PR — one click to sign.
 

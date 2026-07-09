@@ -6,7 +6,7 @@ A fully deployable, self-service Next.js template demonstrating tool-level crypt
 
 Click the button below to deploy this template directly to Vercel. It will prompt you to set up your environment keys automatically:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnqzai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs-vercel-ai&env=KAKUNIN_API_KEY,OPENAI_API_KEY&envDescription=Provide%20your%20API%20keys%20for%20Kakunin%20and%20OpenAI&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkakunin-ai%2Fkakunin-samples%2Ftree%2Fmain%2Fnextjs-vercel-ai&env=KAKUNIN_API_KEY,OPENAI_API_KEY&envDescription=Provide%20your%20API%20keys%20for%20Kakunin%20and%20OpenAI&envLink=https%3A%2F%2Fkakunin.ai%2Fdashboard)
 
 ## Features Included
 
